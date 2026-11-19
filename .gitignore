@@ -1,0 +1,42 @@
+# Terraform
+# Provider binaries & module cache
+**/.terraform/
+
+# State files (to never be commited)
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Variable files (incase they contain secrets)
+*.tfvars
+*.tfvars.json
+
+# Override files (local-only)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Plan outputs
+*.tfplan
+
+# CLI config
+.terraformrc
+terraform.rc
+
+# State lock info
+.terraform.tfstate.lock.info
+
+# --- Packer ---
+packer_cache/
+*.pkrvars.hcl
+*.box
+
+# --- General files for extra safety. 
+.DS_Store
+*.log
+*.swp
+*~   
