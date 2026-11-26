@@ -1,6 +1,6 @@
 resource "aws_network_acl" "acl" {
   subnet_ids = [aws_subnet.public_subnet.id]
-  vpc_id    = aws_vpc.mainvpc.id
+  vpc_id     = aws_vpc.mainvpc.id
 
   egress {
     rule_no    = 100
@@ -30,7 +30,7 @@ resource "aws_security_group" "web_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol     = "tcp"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
