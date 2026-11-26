@@ -1,0 +1,62 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  validate-and-secure:
+    name: "Validate, Lint, & Scan"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # for Gitleaks to scan commit history
+
+      # 1. Secret Scanning with Gitleaks
+      - name: Run Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 # Black Duck Security Scan GitHub Action allows you to configure your pipeline to run Black Duck Security Scan anv3
+        with:
+          terraform_version: 1.17.2
+
+      # 3. Check Formatting
+      - name: Verify Terraform Formatting
+        run: terraform fmt -check -recursive
+
+      # 4. Initialize Terraform (Required for TFLint provider checks)
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # 5. Run TFLint (Linting & Best Practices)
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: tflint --format=compact
+
+      # 6. Run Checkov (Static Security Analysis)
+      - name: Run Checkov Security Scanner
+        uses: bridgecrewio/checkov-action@master
+        with:
+          framework: terraform
+          output_format: cli
+          soft_fail: false
