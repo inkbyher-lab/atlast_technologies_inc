@@ -23,6 +23,11 @@ resource "aws_network_acl" "acl" {
 
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+  # no rules defined, blocking all default traffic
+}
+
 resource "aws_security_group" "web_sg" {
   name        = "WEB-SG"
   description = "web security group, allowing HTTP and HTTPS"
