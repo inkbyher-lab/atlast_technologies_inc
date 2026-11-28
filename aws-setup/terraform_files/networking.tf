@@ -6,7 +6,7 @@ resource "aws_flow_log" "example" {
   vpc_id               = aws_vpc.mainvpc.id
   traffic_type         = "ALL"
   log_destination_type = "cloud-watch-logs"
-  # plus IAM role and cloudwatch logs configuration 
+  # plus IAM role and cloudwatch logs configuration
 }
 
 resource "aws_internet_gateway" "igw" {

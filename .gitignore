@@ -35,8 +35,8 @@ packer_cache/
 *.pkrvars.hcl
 *.box
 
-# --- General files for extra safety. 
+# --- General files for extra safety.
 .DS_Store
 *.log
 *.swp
-*~   
+*~

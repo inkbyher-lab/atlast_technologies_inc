@@ -31,7 +31,7 @@ resource "aws_ecs_service" "web_service" {
   name            = "web-service"
   desired_count   = 2
   task_definition = aws_ecs_task_definition.web_task.id
-  # iam role necessary as we will be using a load balancer with ecs.  will be defined later. 
+  # iam role necessary as we will be using a load balancer with ecs.  will be defined later.
   cluster     = aws_ecs_cluster.web_cluster.id
   launch_type = "FARGATE"
 

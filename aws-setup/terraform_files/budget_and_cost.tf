@@ -1,12 +1,12 @@
 resource "aws_budgets_budget" "cost_budget" {
-    name = "cost-budget"
-    budget_type = "COST"
-    time_period_start = "2026-12-15_12:00"
-    time_unit = "MONTHLY"
-    limit_amount = "100"
-    limit_unit  = "USD"
+  name              = "cost-budget"
+  budget_type       = "COST"
+  time_period_start = "2026-12-15_12:00"
+  time_unit         = "MONTHLY"
+  limit_amount      = "100"
+  limit_unit        = "USD"
 
-    notification {
+  notification {
     comparison_operator        = "GREATER_THAN"
     threshold                  = 80
     threshold_type             = "PERCENTAGE"
@@ -16,15 +16,15 @@ resource "aws_budgets_budget" "cost_budget" {
 
 }
 
-resource "aws_budgets_budget" "usage_budget"{
-    name = "usage-budget"
-    budget_type = "USAGE"
-    time_period_start = "2026-12-15_12:00"
-    time_unit = "MONTHLY"
-    limit_amount = "3"
-    limit_unit = "GB"
-    
-    notification {
+resource "aws_budgets_budget" "usage_budget" {
+  name              = "usage-budget"
+  budget_type       = "USAGE"
+  time_period_start = "2026-12-15_12:00"
+  time_unit         = "MONTHLY"
+  limit_amount      = "3"
+  limit_unit        = "GB"
+
+  notification {
     comparison_operator        = "GREATER_THAN"
     threshold                  = 80
     threshold_type             = "PERCENTAGE"

@@ -99,16 +99,16 @@ resource "aws_security_group" "db_sg" {
   description = "database security group, only allowing access by the website"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port      = 80
+    to_port        = 80
+    protocol       = "tcp"
     security_group = aws_security_group.web_sg.id
   }
 
   egress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port      = 80
+    to_port        = 80
+    protocol       = "tcp"
     security_group = aws_security_group.web_sg.id
   }
 }
@@ -152,20 +152,20 @@ resource "aws_wafv2_web_acl" "web_acl" {
   }
 }
 
-# get caller ID upon terraform apply instead of hardcoding. 
+# get caller ID upon terraform apply instead of hardcoding.
 data "aws_caller_identity" "current" {}
 
-# Enable Amazon Inspector 
+# Enable Amazon Inspector
 resource "aws_inspector2_enabler" "vulnerability_inspector" {
-  account_ids   = [data.aws_caller_identity.current.account_id]
+  account_ids    = [data.aws_caller_identity.current.account_id]
   resource_types = ["ECS", "ECR", "FARGATE"]
 }
 
-resource "aws_cloudtrail" "api_trail"{
-  name = "api-trail"
-  s3_bucket = "api-logs-bucket"
-  enable_logging = true 
+resource "aws_cloudtrail" "api_trail" {
+  name                          = "api-trail"
+  s3_bucket                     = "api-logs-bucket"
+  enable_logging                = true
   include_global_service_events = true
-  is_multi_region_trail = true
-  enable_log_file_validation = true 
+  is_multi_region_trail         = true
+  enable_log_file_validation    = true
 }
