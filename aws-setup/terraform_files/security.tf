@@ -25,7 +25,7 @@ resource "aws_network_acl" "acl" {
 
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.main.id
-  # no rules defined, blocking all default traffic
+  # no rules defined, to block all default traffic
 }
 
 resource "aws_security_group" "web_sg" {
@@ -45,7 +45,74 @@ resource "aws_security_group" "web_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
+
+resource "aws_security_group" "lb_sg" {
+  name        = "ALB-SG"
+  description = "load balancer security group, allowing HTTP and HTTPS "
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "db_sg" {
+  name        = "DB-SG"
+  description = "database security group, only allowing access by the website"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_group = aws_security_group.web_sg.id
+  }
+
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_group = aws_security_group.web_sg.id
+  }
+}
+
 
 resource "aws_wafv2_web_acl" "web_acl" {
   name        = "web-acl-rate-limiting-rule"
@@ -83,4 +150,22 @@ resource "aws_wafv2_web_acl" "web_acl" {
     metric_name                = "web-acl-metric-name"
     sampled_requests_enabled   = true # helpful for debugging
   }
+}
+
+# get caller ID upon terraform apply instead of hardcoding. 
+data "aws_caller_identity" "current" {}
+
+# Enable Amazon Inspector 
+resource "aws_inspector2_enabler" "vulnerability_inspector" {
+  account_ids   = [data.aws_caller_identity.current.account_id]
+  resource_types = ["ECS", "ECR", "FARGATE"]
+}
+
+resource "aws_cloudtrail" "api_trail"{
+  name = "api-trail"
+  s3_bucket = "api-logs-bucket"
+  enable_logging = true 
+  include_global_service_events = true
+  is_multi_region_trail = true
+  enable_log_file_validation = true 
 }
